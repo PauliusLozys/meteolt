@@ -75,13 +75,15 @@ func ReadData(url string) *Weather {
 func TemperatureColor(tempreture float32) string {
 	switch {
 	case tempreture <= 12:
-		return "\033[34m"
+		return Blue
 	case tempreture > 12 && tempreture < 20:
-		return "\033[36m"
-	case tempreture >= 20:
-		return "\033[31m"
+		return Cyan
+	case tempreture >= 20 && tempreture < 25:
+		return Green
+	case tempreture >= 25:
+		return Red
 	default:
-		return "\033[0m"
+		return Reset
 	}
 }
 
