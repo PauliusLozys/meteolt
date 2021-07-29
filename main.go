@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -87,7 +88,7 @@ func TemperatureColor(tempreture float32) string {
 	}
 }
 
-func DisplayDayInfo(day int, forecasts [][]Forecast) {
+func DisplayDayInfoList(day int, forecasts [][]Forecast) {
 	fmt.Println("Diena:", forecasts[day][0].FormattedTime.Day())
 	var topTemperature float32 = 0
 	var averageTempreture float32 = 0
@@ -105,8 +106,44 @@ func DisplayDayInfo(day int, forecasts [][]Forecast) {
 		averageTempreture += hour.AirTemperature
 	}
 	fmt.Println(Separator)
-	fmt.Println("Aukščiausia temperatūra:", topTemperature)
-	fmt.Printf("Vidutinė temperatūra: %.1f\n", averageTempreture/float32(len(forecasts[day])))
+	fmt.Printf("Aukščiausia temperatūra: %v°C\n", topTemperature)
+	fmt.Printf("Vidutinė temperatūra: %.1f°C\n", averageTempreture/float32(len(forecasts[day])))
+	fmt.Println(Separator)
+}
+
+func DisplayDayInfoColumn(day int, forecasts [][]Forecast) {
+	Separator := strings.Repeat("=", 9*len(forecasts[day]))
+	fmt.Println("Diena:", forecasts[day][0].FormattedTime.Day())
+	fmt.Println(Separator)
+
+	var topTemperature float32 = 0
+	var averageTempreture float32 = 0
+
+	for _, hour := range forecasts[day] {
+		if topTemperature < hour.AirTemperature {
+			topTemperature = hour.AirTemperature
+		}
+		if hour.FormattedTime.Hour() == time.Now().Hour() {
+			fmt.Printf(Purple+" %-7v"+Reset+"|", fmt.Sprintf("%vh", hour.FormattedTime.Hour()))
+		} else {
+			fmt.Printf(" %-7v|", fmt.Sprintf("%vh", hour.FormattedTime.Hour()))
+		}
+		averageTempreture += hour.AirTemperature
+	}
+	fmt.Println()
+	for _, hour := range forecasts[day] {
+		if hour.FormattedTime.Hour() == time.Now().Hour() {
+			fmt.Printf(TemperatureColor(hour.AirTemperature)+" %-7v"+Reset+"|",
+				fmt.Sprintf("%v°C", hour.AirTemperature))
+		} else {
+			fmt.Printf(TemperatureColor(hour.AirTemperature)+" %-7v"+Reset+"|",
+				fmt.Sprintf("%v°C", hour.AirTemperature))
+		}
+	}
+
+	fmt.Println("\n" + Separator)
+	fmt.Printf("Aukščiausia temperatūra: %v°C\n", topTemperature)
+	fmt.Printf("Vidutinė temperatūra: %.1f°C\n", averageTempreture/float32(len(forecasts[day])))
 	fmt.Println(Separator)
 }
 
@@ -116,7 +153,7 @@ func main() {
 	seperated := weather.SeparateByDay()
 
 	fmt.Println("Miestas:", weather.Place.Name)
-	fmt.Println(Separator)
 
-	DisplayDayInfo(0, seperated)
+	//DisplayDayInfoList(0, seperated)
+	DisplayDayInfoColumn(0, seperated)
 }
