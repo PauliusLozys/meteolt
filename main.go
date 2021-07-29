@@ -87,21 +87,24 @@ func TemperatureColor(tempreture float32) string {
 
 func DisplayDayInfo(day int, forecasts [][]Forecast) {
 	fmt.Println("Diena:", forecasts[day][0].FormattedTime.Day())
-	var topTemperature float32
+	var topTemperature float32 = 0
+	var averageTempreture float32 = 0
 	for _, hour := range forecasts[day] {
 		if topTemperature < hour.AirTemperature {
 			topTemperature = hour.AirTemperature
 		}
 		if hour.FormattedTime.Hour() == time.Now().Hour() {
-			fmt.Printf(Purple +"Laikas: %vh:"+TemperatureColor(hour.AirTemperature)+" %v\n"+ Reset,
+			fmt.Printf(Purple+"Laikas: %vh:"+TemperatureColor(hour.AirTemperature)+" %v\n"+Reset,
 				hour.FormattedTime.Hour(), hour.AirTemperature)
 		} else {
-			fmt.Printf(Reset+"Laikas: %vh:"+TemperatureColor(hour.AirTemperature)+" %v\n"+ Reset,
+			fmt.Printf(Reset+"Laikas: %vh:"+TemperatureColor(hour.AirTemperature)+" %v\n"+Reset,
 				hour.FormattedTime.Hour(), hour.AirTemperature)
 		}
+		averageTempreture += hour.AirTemperature
 	}
 	fmt.Println(Separator)
 	fmt.Println("Aukščiausia temperatūra:", topTemperature)
+	fmt.Printf("Vidutinė temperatūra: %.1f\n", averageTempreture/float32(len(forecasts[day])))
 	fmt.Println(Separator)
 }
 
