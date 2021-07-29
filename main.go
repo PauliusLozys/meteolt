@@ -5,12 +5,17 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
+	"os/exec"
+	"strconv"
 	"strings"
 	"time"
 )
 
 var (
-	Separator = "=============================="
+	Separator = "================================"
+	DefaultColumnView = true
+	DefaultDayIndex = 0
 	Gray      = "\033[37m"
 	Reset     = "\033[0m"
 	Red       = "\033[31m"
@@ -147,13 +152,98 @@ func DisplayDayInfoColumn(day int, forecasts [][]Forecast) {
 	fmt.Println(Separator)
 }
 
+func GetInput() int {
+	fmt.Print("> ")
+	var input string
+	fmt.Scanf("%v", &input)
+	if input == "h" {
+		return 1
+	}
+	if input == "sd" {
+		return 2
+	}
+	if input == "sv" {
+		return 3
+	}
+	if input == "q" {
+		return 4
+	}
+	return 0
+}
+
+func GetNumericInput() int {
+	fmt.Print("> ")
+	var input string
+	fmt.Scanf("%v", &input)
+	val, err := strconv.Atoi(input)
+	if err != nil {
+		return -1
+	}
+	return val
+}
+
+func HandleInput(input int, days [][]Forecast) {
+	switch input {
+	case 1:
+		fmt.Println("Available commands:")
+		fmt.Println("\th - display this page\n\tsd - switch day\n\tsv - switch view\n\tq - quit\nPress Enter to continue")
+		GetInput()
+	case 2:
+		fmt.Println("Select which day to display:")
+		for idx, d := range days {
+			fmt.Printf("\t%v - %v-%v\n", idx, d[0].FormattedTime.Month(), d[0].FormattedTime.Day())
+		}
+		val := GetNumericInput()
+		if val <= 6 && val >= 0 {
+			DefaultDayIndex = val
+		}
+		time.Sleep(1*time.Second)
+	case 3:
+		fmt.Println("What view to use?:\n\t1 - Column view\n\t2 - List view")
+		val := GetNumericInput()
+		if(val == 1) {
+			DefaultColumnView = true
+		} else if val == 2 {
+			DefaultColumnView = false
+		}
+	}
+}
+
+
+func Draw(seperated [][]Forecast) {
+	if(DefaultColumnView) {
+		DisplayDayInfoColumn(DefaultDayIndex, seperated)
+	} else {
+		DisplayDayInfoList(DefaultDayIndex, seperated)
+	}
+}
+
+func ClearConsole() {
+	cmd := exec.Command("clear") // Linux only because Windows just doesn't want to work
+	cmd.Stdout = os.Stdout
+	cmd.Run()
+}
+
 func main() {
 	url := "https://api.meteo.lt/v1/places/gargzdai/forecasts/long-term"
 	weather := ReadData(url)
 	seperated := weather.SeparateByDay()
 
-	fmt.Println("Miestas:", weather.Place.Name)
+	for {
+		ClearConsole()
+		fmt.Println("Miestas:", weather.Place.Name)
+		Draw(seperated)
+		input := GetInput()
+		if input == 4 {
+			return
+		}
+		HandleInput(input, seperated)
+
+	}
 
 	//DisplayDayInfoList(0, seperated)
-	DisplayDayInfoColumn(0, seperated)
+	//DisplayDayInfoColumn(0, seperated)
+
 }
+
+
