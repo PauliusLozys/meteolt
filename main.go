@@ -12,9 +12,22 @@ import (
 )
 
 var (
+	Separator         = "================================"
+	DefaultCity       = "gargzdai"
+	DefaultColumnView = true
 	UsedRangeArgument = false
 	DefaultDay        = time.Now().Day()
 	DefaultStartHour  = time.Now().Hour()
+	DefaultEndHour    = 24
+	Gray              = "\033[37m"
+	Reset             = "\033[0m"
+	Red               = "\033[31m"
+	Green             = "\033[32m"
+	Yellow            = "\033[33m"
+	Blue              = "\033[34m"
+	Purple            = "\033[35m"
+	Cyan              = "\033[36m"
+	White             = "\033[97m"
 )
 
 type Forecast struct {
@@ -37,6 +50,7 @@ func (w *Weather) GetDefaultDayForecast() []Forecast {
 	var dayForecast []Forecast
 	// For other days than today, show whole forecast, unless -r was used
 	if DefaultDay != time.Now().Day() && !UsedRangeArgument {
+		DefaultStartHour = 0
 	}
 
 	for _, day := range w.ForecastTimestamps {
@@ -199,6 +213,7 @@ func HandleArguments() {
 		case "-d":
 			i++
 			day, _ := strconv.Atoi(args[i])
+			DefaultDay = time.Now().AddDate(0, 0, day%7).Day()
 		case "-h":
 			fmt.Println("Usage: weather [arguments]")
 			fmt.Println("Arguments\n\t-r START END - set hour display range <Default = 8 24>\n\t-c CITYNAME - change default city\n\t-lv - change to a list view\n\t" +
