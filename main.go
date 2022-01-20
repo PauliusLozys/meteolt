@@ -73,11 +73,11 @@ func (w *Weather) GetDefaultDayForecast() []Forecast {
 	return dayForecast
 }
 
-func ReadData(url string) *Weather {
+func ReadData(url string) (*Weather, error) {
 	response, err := http.Get(url)
 	defer response.Body.Close()
 	if err != nil {
-		return nil
+		panic(err)
 	}
 	body, _ := ioutil.ReadAll(response.Body)
 	var data Weather
@@ -85,7 +85,13 @@ func ReadData(url string) *Weather {
 	if err != nil {
 		panic(err)
 	}
-	return &data
+
+	// Got no data
+	if data.Place.Name == "" {
+		return nil, fmt.Errorf("Miestas \"%v\" neturi duomenų", DefaultCity)
+	}
+
+	return &data, nil
 }
 
 func TemperatureColor(temperature float32) string {
@@ -227,7 +233,12 @@ func main() {
 
 	HandleArguments()
 	url := "https://api.meteo.lt/v1/places/" + DefaultCity + "/forecasts/long-term"
-	weather := ReadData(url)
+	weather, err := ReadData(url)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
 	forecast := weather.GetDefaultDayForecast()
 
 	fmt.Println("Miestas:", weather.Place.Name)
