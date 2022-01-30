@@ -34,6 +34,7 @@ type Forecast struct {
 	ForecastTimeUtc    string  `json:"forecastTimeUtc"`
 	AirTemperature     float32 `json:"airTemperature"`
 	TotalParticipation float32 `json:"totalPrecipitation"`
+	WindSpeed	   float32 `json:"windSpeed"`
 	FormattedTime      time.Time
 }
 
@@ -139,6 +140,7 @@ func DisplayDayInfoList(forecast []Forecast) {
 
 	var topTemperature float32 = 0
 	var averageTemperature float32 = 0
+	var averageWindSpeed float32 = 0
 	for _, hour := range forecast {
 		if topTemperature < hour.AirTemperature {
 			topTemperature = hour.AirTemperature
@@ -152,10 +154,12 @@ func DisplayDayInfoList(forecast []Forecast) {
 				hour.FormattedTime.Hour(), fmt.Sprintf("%v°C", hour.AirTemperature), weatherDescription)
 		}
 		averageTemperature += hour.AirTemperature
+		averageWindSpeed += hour.WindSpeed
 	}
 	fmt.Println(Separator)
 	fmt.Printf("Aukščiausia temperatūra: %v°C\n", topTemperature)
 	fmt.Printf("Vidutinė temperatūra: %.1f°C\n", averageTemperature/float32(len(forecast)))
+	fmt.Printf("Vidutinis vėjo greitis: %.1fm/s\n", averageWindSpeed/float32(len(forecast)))
 	fmt.Println(Separator)
 }
 
@@ -169,6 +173,7 @@ func DisplayDayInfoColumn(forecast []Forecast) {
 
 	var topTemperature float32 = 0
 	var averageTemperature float32 = 0
+	var averageWindSpeed float32 = 0
 
 	for _, hour := range forecast {
 		if topTemperature < hour.AirTemperature {
@@ -180,6 +185,7 @@ func DisplayDayInfoColumn(forecast []Forecast) {
 			fmt.Printf(" %-7v|", fmt.Sprintf("%vh", hour.FormattedTime.Hour()))
 		}
 		averageTemperature += hour.AirTemperature
+		averageWindSpeed += hour.WindSpeed
 	}
 	fmt.Println()
 	for _, hour := range forecast {
@@ -195,6 +201,7 @@ func DisplayDayInfoColumn(forecast []Forecast) {
 	fmt.Println("\n" + Separator)
 	fmt.Printf("Aukščiausia temperatūra: %v°C\n", topTemperature)
 	fmt.Printf("Vidutinė temperatūra: %.1f°C\n", averageTemperature/float32(len(forecast)))
+	fmt.Printf("Vidutinis vėjo greitis: %.1fm/s\n", averageWindSpeed/float32(len(forecast)))
 	fmt.Println(Separator)
 }
 
