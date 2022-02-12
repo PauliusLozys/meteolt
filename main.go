@@ -34,7 +34,7 @@ type Forecast struct {
 	ForecastTimeUtc    string  `json:"forecastTimeUtc"`
 	AirTemperature     float32 `json:"airTemperature"`
 	TotalParticipation float32 `json:"totalPrecipitation"`
-	WindSpeed	   float32 `json:"windSpeed"`
+	WindSpeed          float32 `json:"windSpeed"`
 	FormattedTime      time.Time
 }
 
@@ -125,7 +125,7 @@ func GetRainDescription(totalParticipation float32) string {
 }
 
 func MapMonthsToLithuanian(month time.Month) string {
-	m := month-1
+	m := month - 1
 	if m < 0 || m > 11 {
 		return "Nežinomas mėnuo"
 	}
@@ -211,10 +211,17 @@ func HandleArguments() {
 	for i := 0; i < len(args); i++ {
 		switch args[i] {
 		case "-r":
+			start := DefaultStartHour
+			end := DefaultEndHour
 			i++
-			start, _ := strconv.Atoi(args[i])
+			if args[i] != "." {
+				start, _ = strconv.Atoi(args[i])
+			}
 			i++
-			end, _ := strconv.Atoi(args[i])
+			if args[i] != "." {
+				end , _ = strconv.Atoi(args[i])
+			}
+
 			DefaultStartHour = start
 			DefaultEndHour = end
 			UsedRangeArgument = true
@@ -229,8 +236,11 @@ func HandleArguments() {
 			DefaultDay = time.Now().AddDate(0, 0, day%7).Day()
 		case "-h":
 			fmt.Println("Usage: weather [arguments]")
-			fmt.Println("Arguments\n\t-r START END - set hour display range <Default = 8 24>\n\t-c CITYNAME - change default city\n\t-lv - change to a list view\n\t" +
-				"-d NUMBER - display day (0 - today, 1 - tomorrow, ...). Range 0..6 <Default = 0>")
+			fmt.Println("Arguments:")
+			fmt.Println("	-r (START|.) (END|.) - set hour display range <Default = 8 24>")
+			fmt.Println("	-c CITYNAME - change default city")
+			fmt.Println("	-lv - change to a list view")
+			fmt.Println("	-d NUMBER - display day (0 - today, 1 - tomorrow, ...). Range 0..6 <Default = 0>")
 			os.Exit(0)
 		}
 	}
