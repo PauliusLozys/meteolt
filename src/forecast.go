@@ -11,12 +11,14 @@ type Forecast struct {
 	AirTemperature     float32 `json:"airTemperature"`
 	TotalParticipation float32 `json:"totalPrecipitation"`
 	WindSpeed          float32 `json:"windSpeed"`
+	WindGust           float32 `json:"windGust"`
+	RelativeHumidity   int     `json:"relativeHumidity"`
 	FormattedTime      time.Time
 }
 
 type ForecastList []Forecast
 
-func (forecasts ForecastList) DisplayDayInfoList() {
+func (forecasts ForecastList) DisplayDayInfoList(displayDetails bool) {
 	var (
 		topTemperature     float32 = 0.0
 		averageTemperature float32 = 0.0
@@ -34,13 +36,28 @@ func (forecasts ForecastList) DisplayDayInfoList() {
 		if topTemperature < forecast.AirTemperature {
 			topTemperature = forecast.AirTemperature
 		}
-		weatherDescription := GetRainDescription(forecast.TotalParticipation)
 		color := Reset
 		if forecast.FormattedTime.Hour() == time.Now().Hour() {
 			color = Purple
 		}
-		fmt.Printf(color+"Laikas: %+2vh "+TemperatureColor(forecast.AirTemperature)+" %-7v"+Reset+"%v\n",
-			forecast.FormattedTime.Hour(), fmt.Sprintf("%v°C", forecast.AirTemperature), weatherDescription)
+
+		fmt.Printf("%sLaikas: %+2vh%s %-7v %s%s\n",
+			color,
+			forecast.FormattedTime.Hour(),
+			TemperatureColor(forecast.AirTemperature),
+			fmt.Sprintf("%v°C", forecast.AirTemperature),
+			Reset,
+			GetRainDescription(forecast.TotalParticipation),
+		)
+
+		if displayDetails {
+			fmt.Printf("\tVėjo gretis: %vm/s\n\tVėjo gūsiai: %vm/s\n\tSantykinė oro dregmė: %v%%\n",
+				forecast.WindSpeed,
+				forecast.WindGust,
+				forecast.RelativeHumidity,
+			)
+		}
+
 		averageTemperature += forecast.AirTemperature
 		averageWindSpeed += forecast.WindSpeed
 	}

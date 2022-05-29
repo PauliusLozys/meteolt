@@ -10,6 +10,7 @@ import (
 var (
 	DefaultCity       = "gargzdai"
 	DefaultColumnView = true
+	DetailedListView  = false
 	UsedRangeArgument = false
 	DefaultDay        = time.Now().Day()
 	DefaultStartHour  = time.Now().Hour()
@@ -41,6 +42,9 @@ func HandleArguments() {
 			DefaultCity = args[i]
 		case "-lv":
 			DefaultColumnView = false
+		case "-lvi":
+			DefaultColumnView = false
+			DetailedListView = true
 		case "-d":
 			i++
 			day, _ := strconv.Atoi(args[i])
@@ -51,6 +55,7 @@ func HandleArguments() {
 			fmt.Println("	-r (START|.) (END|.) - set hour display range <Default = 8 24>")
 			fmt.Println("	-c CITYNAME - change default city")
 			fmt.Println("	-lv - change to a list view")
+			fmt.Println("	-lvi - change to a list view with more information")
 			fmt.Println("	-d NUMBER - display day (0 - today, 1 - tomorrow, ...). Range 0..6 <Default = 0>")
 			os.Exit(0)
 		}
@@ -73,6 +78,6 @@ func main() {
 	if DefaultColumnView {
 		forecast.DisplayDayInfoColumn()
 	} else {
-		forecast.DisplayDayInfoList()
+		forecast.DisplayDayInfoList(DetailedListView)
 	}
 }
