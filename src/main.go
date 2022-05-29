@@ -8,7 +8,6 @@ import (
 )
 
 var (
-	Separator         = "================================"
 	DefaultCity       = "gargzdai"
 	DefaultColumnView = true
 	UsedRangeArgument = false
@@ -67,7 +66,7 @@ func main() {
 		return
 	}
 
-	forecast := weather.GetDefaultDayForecast()
+	forecast := weather.GetForecastByDay(DefaultDay, DefaultStartHour, DefaultEndHour)
 
 	fmt.Println("Miestas:", weather.Place.Name)
 

@@ -14,28 +14,28 @@ type Weather struct {
 		Name    string `json:"name"`
 		Country string `json:"country"`
 	} `json:"place"`
-	ForecastTimestamps []Forecast `json:"forecastTimestamps"`
+	ForecastTimestamps ForecastList `json:"forecastTimestamps"`
 }
 
-func (w *Weather) GetDefaultDayForecast() ForecastList {
+func (w *Weather) GetForecastByDay(day, startHour, endHour int) ForecastList {
 	// For other days than today, show whole forecast, unless -r was used
-	if DefaultDay != time.Now().Day() && !UsedRangeArgument {
-		DefaultStartHour = 0
+	if day != time.Now().Day() && !UsedRangeArgument {
+		startHour = 0
 	}
 
-	var dayForecast []Forecast
-	for _, day := range w.ForecastTimestamps {
-		t, _ := time.Parse("2006-01-02 15:04:05", day.ForecastTimeUtc)
+	var dayForecast ForecastList
+	for _, forecast := range w.ForecastTimestamps {
+		t, _ := time.Parse("2006-01-02 15:04:05", forecast.ForecastTimeUtc)
 
-		if t.Day() != DefaultDay || t.Hour() < DefaultStartHour || t.Hour() > DefaultEndHour {
+		if t.Day() != day || t.Hour() < startHour || t.Hour() > endHour {
 			if len(dayForecast) != 0 {
 				break
 			}
 			continue
 		}
 
-		day.FormattedTime = t
-		dayForecast = append(dayForecast, day)
+		forecast.FormattedTime = t
+		dayForecast = append(dayForecast, forecast)
 	}
 
 	return dayForecast
