@@ -45,6 +45,8 @@ func HandleArguments() {
 		case "-lvi":
 			DefaultColumnView = false
 			DetailedListView = true
+		case "-n":
+			DefaultDay = time.Now().Day() + 1
 		case "-d":
 			i++
 			day, _ := strconv.Atoi(args[i])
@@ -57,6 +59,7 @@ func HandleArguments() {
 			fmt.Println("	-lv - change to a list view")
 			fmt.Println("	-lvi - change to a list view with more information")
 			fmt.Println("	-d NUMBER - display day (0 - today, 1 - tomorrow, ...). Range 0..6 <Default = 0>")
+			fmt.Println("	-n - display next day weather")
 			os.Exit(0)
 		}
 	}
