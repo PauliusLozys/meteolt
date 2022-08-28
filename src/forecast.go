@@ -77,9 +77,15 @@ func (forecasts ForecastList) DisplayDayInfoColumn() {
 		separator          string  = strings.Repeat("=", 9*len(forecasts))
 	)
 
+	if len(forecasts) == 0 {
+		fmt.Println("Nėra duomenų")
+		return
+	}
+
 	fmt.Println("Data:",
 		MapMonthsToLithuanian(forecasts[0].FormattedTime.Month()),
-		forecasts[0].FormattedTime.Day())
+		forecasts[0].FormattedTime.Day(),
+	)
 
 	fmt.Println(separator)
 

@@ -23,19 +23,14 @@ func HandleArguments() {
 	for i := 0; i < len(args); i++ {
 		switch args[i] {
 		case "-r":
-			start := DefaultStartHour
-			end := DefaultEndHour
 			i++
 			if args[i] != "." {
-				start, _ = strconv.Atoi(args[i])
+				DefaultStartHour, _ = strconv.Atoi(args[i])
 			}
 			i++
 			if args[i] != "." {
-				end, _ = strconv.Atoi(args[i])
+				DefaultEndHour, _ = strconv.Atoi(args[i])
 			}
-
-			DefaultStartHour = start
-			DefaultEndHour = end
 			UsedRangeArgument = true
 		case "-c":
 			i++
@@ -49,8 +44,8 @@ func HandleArguments() {
 			DefaultDay = time.Now().Day() + 1
 		case "-d":
 			i++
-			day, _ := strconv.Atoi(args[i])
-			DefaultDay = time.Now().AddDate(0, 0, day%7).Day()
+			days, _ := strconv.Atoi(args[i])
+			DefaultDay = time.Now().AddDate(0, 0, days%7).Day()
 		case "-h":
 			fmt.Println("Usage: weather [arguments]")
 			fmt.Println("Arguments:")
