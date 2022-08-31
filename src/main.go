@@ -41,7 +41,7 @@ func HandleArguments() {
 			DefaultColumnView = false
 			DetailedListView = true
 		case "-n":
-			DefaultDay = time.Now().Day() + 1
+			DefaultDay = time.Now().AddDate(0, 0, 1).Day()
 		case "-d":
 			i++
 			days, _ := strconv.Atoi(args[i])
