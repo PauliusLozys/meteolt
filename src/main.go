@@ -9,7 +9,7 @@ import (
 
 var (
 	DefaultCity       = "gargzdai"
-	DefaultColumnView = true
+	ListViewEnabled   = false
 	DetailedListView  = false
 	UsedRangeArgument = false
 	DefaultDay        = time.Now().Day()
@@ -36,9 +36,9 @@ func HandleArguments() {
 			i++
 			DefaultCity = args[i]
 		case "-lv":
-			DefaultColumnView = false
+			ListViewEnabled = true
 		case "-lvi":
-			DefaultColumnView = false
+			ListViewEnabled = true
 			DetailedListView = true
 		case "-n":
 			DefaultDay = time.Now().AddDate(0, 0, 1).Day()
@@ -73,9 +73,10 @@ func main() {
 
 	fmt.Println("Miestas:", weather.Place.Name)
 
-	if DefaultColumnView {
-		forecast.DisplayDayInfoColumn()
-	} else {
-		forecast.DisplayDayInfoList(DetailedListView)
+	displayFn := DisplayDayInfoColumn
+	if ListViewEnabled {
+		displayFn = DisplayDayInfoList
 	}
+
+	forecast.DisplayDayInfo(DetailedListView, displayFn)
 }
