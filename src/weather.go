@@ -19,7 +19,7 @@ type Weather struct {
 
 func (w *Weather) GetForecastByDay(day, startHour, endHour int) ForecastList {
 	// For other days than today, show whole forecast, unless -r was used
-	if day != time.Now().Day() && !UsedRangeArgument {
+	if day != time.Now().Day() && !usedRangeArgument {
 		startHour = 0
 	}
 
@@ -57,7 +57,7 @@ func ReadWeatherData(url string) (*Weather, error) {
 
 	// Got no data
 	if data.Place.Name == "" {
-		return nil, fmt.Errorf("miestas \"%v\" neturi duomenų", DefaultCity)
+		return nil, fmt.Errorf("miestas \"%v\" neturi duomenų", defaultCity)
 	}
 
 	return &data, nil

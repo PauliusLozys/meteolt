@@ -8,13 +8,13 @@ import (
 )
 
 var (
-	DefaultCity       = "gargzdai"
-	ListViewEnabled   = false
-	DetailedListView  = false
-	UsedRangeArgument = false
-	DefaultDay        = time.Now().Day()
-	DefaultStartHour  = time.Now().Hour()
-	DefaultEndHour    = 24
+	defaultCity       = "gargzdai"
+	listViewEnabled   = false
+	detailedListView  = false
+	usedRangeArgument = false
+	defaultDay        = time.Now().Day()
+	defaultStartHour  = time.Now().Hour()
+	defaultEndHour    = 24
 )
 
 func HandleArguments() {
@@ -25,27 +25,27 @@ func HandleArguments() {
 		case "-r":
 			i++
 			if args[i] != "." {
-				DefaultStartHour, _ = strconv.Atoi(args[i])
+				defaultStartHour, _ = strconv.Atoi(args[i])
 			}
 			i++
 			if args[i] != "." {
-				DefaultEndHour, _ = strconv.Atoi(args[i])
+				defaultEndHour, _ = strconv.Atoi(args[i])
 			}
-			UsedRangeArgument = true
+			usedRangeArgument = true
 		case "-c":
 			i++
-			DefaultCity = args[i]
+			defaultCity = args[i]
 		case "-lv":
-			ListViewEnabled = true
+			listViewEnabled = true
 		case "-lvi":
-			ListViewEnabled = true
-			DetailedListView = true
+			listViewEnabled = true
+			detailedListView = true
 		case "-n":
-			DefaultDay = time.Now().AddDate(0, 0, 1).Day()
+			defaultDay = time.Now().AddDate(0, 0, 1).Day()
 		case "-d":
 			i++
 			days, _ := strconv.Atoi(args[i])
-			DefaultDay = time.Now().AddDate(0, 0, days%7).Day()
+			defaultDay = time.Now().AddDate(0, 0, days%7).Day()
 		case "-h":
 			fmt.Println("Usage: weather [arguments]")
 			fmt.Println("Arguments:")
@@ -62,21 +62,21 @@ func HandleArguments() {
 
 func main() {
 	HandleArguments()
-	url := fmt.Sprintf("https://api.meteo.lt/v1/places/%s/forecasts/long-term", DefaultCity)
+	url := fmt.Sprintf("https://api.meteo.lt/v1/places/%s/forecasts/long-term", defaultCity)
 	weather, err := ReadWeatherData(url)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
-	forecast := weather.GetForecastByDay(DefaultDay, DefaultStartHour, DefaultEndHour)
+	forecast := weather.GetForecastByDay(defaultDay, defaultStartHour, defaultEndHour)
 
 	fmt.Println("Miestas:", weather.Place.Name)
 
 	displayFn := DisplayDayInfoColumn
-	if ListViewEnabled {
+	if listViewEnabled {
 		displayFn = DisplayDayInfoList
 	}
 
-	forecast.DisplayDayInfo(DetailedListView, displayFn)
+	forecast.DisplayDayInfo(detailedListView, displayFn)
 }

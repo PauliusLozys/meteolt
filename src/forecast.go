@@ -33,9 +33,9 @@ func DisplayDayInfoList(
 		if topTemperature < forecast.AirTemperature {
 			topTemperature = forecast.AirTemperature
 		}
-		color := Reset
+		color := reset
 		if forecast.FormattedTime.Hour() == time.Now().Hour() {
-			color = Purple
+			color = purple
 		}
 
 		fmt.Printf("%sLaikas: %+2vh%s %-7v %s%s\n",
@@ -43,7 +43,7 @@ func DisplayDayInfoList(
 			forecast.FormattedTime.Hour(),
 			TemperatureColor(forecast.AirTemperature),
 			fmt.Sprintf("%v°C", forecast.AirTemperature),
-			Reset,
+			reset,
 			GetRainDescription(forecast.TotalParticipation),
 		)
 
@@ -75,17 +75,17 @@ func DisplayDayInfoColumn(
 		if topTemperature < forecast.AirTemperature {
 			topTemperature = forecast.AirTemperature
 		}
-		color := Reset
+		color := reset
 		if forecast.FormattedTime.Hour() == time.Now().Hour() {
-			color = Purple
+			color = purple
 		}
-		fmt.Printf(color+" %-7v"+Reset+"|", fmt.Sprintf("%vh", forecast.FormattedTime.Hour()))
+		fmt.Printf(color+" %-7v"+reset+"|", fmt.Sprintf("%vh", forecast.FormattedTime.Hour()))
 		averageTemperature += forecast.AirTemperature
 		averageWindSpeed += forecast.WindSpeed
 	}
 	fmt.Println()
 	for _, forecast := range forecasts {
-		fmt.Printf(TemperatureColor(forecast.AirTemperature)+" %-7v"+Reset+"|",
+		fmt.Printf(TemperatureColor(forecast.AirTemperature)+" %-7v"+reset+"|",
 			fmt.Sprintf("%v°C", forecast.AirTemperature))
 	}
 	fmt.Println()
