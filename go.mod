@@ -1,3 +1,3 @@
-module meteocli
+module github.com/PauliusLozys/meteolt
 
-go 1.19
+go 1.20
