@@ -1,6 +1,12 @@
 package main
 
-import "time"
+import (
+	"context"
+	"fmt"
+	"time"
+
+	"github.com/PauliusLozys/meteolt"
+)
 
 const (
 	reset  = "\033[0m"
@@ -60,4 +66,40 @@ func MapMonthsToLithuanian(month time.Month) string {
 		return monthName
 	}
 	return "Nežinomas mėnuo"
+}
+
+func GetForecastByDay(w *meteolt.Forecast, day, startHour, endHour int) []meteolt.ForecastTimestamp {
+	// For other days than today, show whole forecast, unless -r was used
+	if day != time.Now().Day() && !usedRangeArgument {
+		startHour = 0
+	}
+
+	var dayForecast []meteolt.ForecastTimestamp
+	for _, forecast := range w.ForecastTimestamps {
+		t := forecast.ForecastTimeUtc
+		if t.Day() != day || t.Hour() < startHour || t.Hour() > endHour {
+			if len(dayForecast) != 0 {
+				break
+			}
+			continue
+		}
+
+		dayForecast = append(dayForecast, forecast)
+	}
+
+	return dayForecast
+}
+
+func ReadWeatherData() (*meteolt.Forecast, error) {
+	forecast, err := meteolt.GetWeatherForecast(context.TODO(), defaultCity, meteolt.ForecastTypeLongTerm)
+	if err != nil {
+		return nil, err
+	}
+
+	// Got no data
+	if forecast.Place.Name == "" {
+		return nil, fmt.Errorf("miestas \"%v\" neturi duomenų", defaultCity)
+	}
+
+	return forecast, nil
 }
