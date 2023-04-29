@@ -1,26 +1,30 @@
-# Meteo-CLI
-Atvaizduojama valandinė dienos temperatūra pasinaudojant Meteo.lt API
+## meteolt ##
+Meteo.lt API library for go.
 
-# Kodo kompiliavimas
-Reikia bent GO 1.19 versijos.
+## Install ##
+
 ```sh
-cd src
-```
-```sh
-go build .
+go get github.com/PauliusLozys/meteolt
 ```
 
-# Komandos
- - -h komandų sąrašas
- - -r <Numeris1|. Numeris2|.> intervalo parinkimas [Numeris1, Numeris2]. Galima naudoti "." norint imti visus įeinančius skaičius.
- - -lv rodyti turinį sąrašo formatu (Numatytas yra stulpelio formatu)
- - -lvi rodyti turinį sąrašo formatu su papildoma informacija
- - -c <Miesto pavadinimas> pakeisit rodomą miestą
- - -d <Numeris> nurodyti kurią dieną rodyti (Numatytas 0). 
- - -n rodyti kitos dienos prognozę
+## Example ##
+``` go
+import (
+	"context"
+	"log"
 
-# Stulpelio formatas
-![Stulpelio formatas](https://github.com/RainbowDog98/Meteo-CLI/blob/master/weather%20cloumn.png)
-# Sąrašo formatas
-![Stulpelio formatas](https://github.com/RainbowDog98/Meteo-CLI/blob/master/weather%20list.png)
+	"github.com/PauliusLozys/meteolt"
+)
 
+func main() {
+	forecast, err := meteolt.GetWeatherForecast(context.Background(), "kaunas", meteolt.ForecastTypeLongTerm)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	log.Println(forecast.Place.Name)
+}
+```
+
+## Meteo LT API documentation ##
+https://api.meteo.lt/
