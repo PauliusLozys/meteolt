@@ -4,23 +4,13 @@ import (
 	"fmt"
 	"strings"
 	"time"
+
+	"github.com/PauliusLozys/meteolt"
 )
-
-type Forecast struct {
-	ForecastTimeUtc    string  `json:"forecastTimeUtc"`
-	AirTemperature     float32 `json:"airTemperature"`
-	TotalParticipation float32 `json:"totalPrecipitation"`
-	WindSpeed          float32 `json:"windSpeed"`
-	WindGust           float32 `json:"windGust"`
-	RelativeHumidity   int     `json:"relativeHumidity"`
-	FormattedTime      time.Time
-}
-
-type ForecastList []Forecast
 
 func DisplayDayInfoList(
 	showDetails bool,
-	forecasts ForecastList,
+	forecasts []meteolt.ForecastTimestamp,
 ) (float32, float32, float32) {
 
 	var (
@@ -34,17 +24,17 @@ func DisplayDayInfoList(
 			topTemperature = forecast.AirTemperature
 		}
 		color := reset
-		if forecast.FormattedTime.Hour() == time.Now().Hour() {
+		if forecast.ForecastTimeUtc.Hour() == time.Now().Hour() {
 			color = purple
 		}
 
 		fmt.Printf("%sLaikas: %+2vh%s %-7v %s%s\n",
 			color,
-			forecast.FormattedTime.Hour(),
+			forecast.ForecastTimeUtc.Hour(),
 			TemperatureColor(forecast.AirTemperature),
 			fmt.Sprintf("%v°C", forecast.AirTemperature),
 			reset,
-			GetRainDescription(forecast.TotalParticipation),
+			GetRainDescription(forecast.TotalPrecipitation),
 		)
 
 		if showDetails {
@@ -62,7 +52,7 @@ func DisplayDayInfoList(
 
 func DisplayDayInfoColumn(
 	showDetails bool,
-	forecasts ForecastList,
+	forecasts []meteolt.ForecastTimestamp,
 ) (float32, float32, float32) {
 
 	var (
@@ -76,10 +66,10 @@ func DisplayDayInfoColumn(
 			topTemperature = forecast.AirTemperature
 		}
 		color := reset
-		if forecast.FormattedTime.Hour() == time.Now().Hour() {
+		if forecast.ForecastTimeUtc.Hour() == time.Now().Hour() {
 			color = purple
 		}
-		fmt.Printf(color+" %-7v"+reset+"|", fmt.Sprintf("%vh", forecast.FormattedTime.Hour()))
+		fmt.Printf(color+" %-7v"+reset+"|", fmt.Sprintf("%vh", forecast.ForecastTimeUtc.Hour()))
 		averageTemperature += forecast.AirTemperature
 		averageWindSpeed += forecast.WindSpeed
 	}
@@ -92,9 +82,10 @@ func DisplayDayInfoColumn(
 	return topTemperature, averageTemperature, averageWindSpeed
 }
 
-func (forecasts ForecastList) DisplayDayInfo(
+func DisplayDayInfo(
+	forecasts []meteolt.ForecastTimestamp,
 	showDetails bool,
-	displayFn func(bool, ForecastList) (float32, float32, float32),
+	displayFn func(bool, []meteolt.ForecastTimestamp) (float32, float32, float32),
 ) {
 
 	separator := strings.Repeat("=", 9*len(forecasts))
@@ -104,8 +95,8 @@ func (forecasts ForecastList) DisplayDayInfo(
 	}
 
 	fmt.Println("Data:",
-		MapMonthsToLithuanian(forecasts[0].FormattedTime.Month()),
-		forecasts[0].FormattedTime.Day(),
+		MapMonthsToLithuanian(forecasts[0].ForecastTimeUtc.Month()),
+		forecasts[0].ForecastTimeUtc.Day(),
 	)
 	fmt.Println(separator)
 

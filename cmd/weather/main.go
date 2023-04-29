@@ -62,14 +62,13 @@ func HandleArguments() {
 
 func main() {
 	HandleArguments()
-	url := fmt.Sprintf("https://api.meteo.lt/v1/places/%s/forecasts/long-term", defaultCity)
-	weather, err := ReadWeatherData(url)
+	weather, err := ReadWeatherData()
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
-	forecast := weather.GetForecastByDay(defaultDay, defaultStartHour, defaultEndHour)
+	forecast := GetForecastByDay(weather, defaultDay, defaultStartHour, defaultEndHour)
 
 	fmt.Println("Miestas:", weather.Place.Name)
 
@@ -78,5 +77,5 @@ func main() {
 		displayFn = DisplayDayInfoList
 	}
 
-	forecast.DisplayDayInfo(detailedListView, displayFn)
+	DisplayDayInfo(forecast, detailedListView, displayFn)
 }
