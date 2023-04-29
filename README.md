@@ -28,3 +28,6 @@ func main() {
 
 ## Meteo LT API documentation ##
 https://api.meteo.lt/
+
+## CLI TOOL ##
+Separate CLI tool which displays weather forecasts in a table format ![find here](https://github.com/RainbowDog98/Meteo-CLI/blob/master/cmd/weather).
