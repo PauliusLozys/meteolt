@@ -1,11 +1,8 @@
-# Weather (Meteo-CLI)
+# weather (Meteo-CLI)
 Atvaizduojama valandinė dienos temperatūra pasinaudojant Meteo.lt API
 
 # Kodo kompiliavimas
 Reikia bent GO 1.20 versijos.
-```sh
-cd src
-```
 ```sh
 go build .
 ```
